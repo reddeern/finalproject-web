@@ -24,6 +24,16 @@ export default function AlatView() {
     fetchKategori();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (activeActionMenu && !e.target.closest('.action-cell')) {
+        setActiveActionMenu(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [activeActionMenu]);
+
   const fetchAlat = async () => {
     setLoading(true);
     try {

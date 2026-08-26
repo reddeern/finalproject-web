@@ -22,6 +22,16 @@ export default function PelangganView() {
     fetchPelanggan();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (activeActionMenu && !e.target.closest('.action-cell')) {
+        setActiveActionMenu(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [activeActionMenu]);
+
   const fetchPelanggan = async () => {
     setLoading(true);
     try {

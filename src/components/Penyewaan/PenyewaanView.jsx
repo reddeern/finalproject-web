@@ -23,6 +23,16 @@ export default function PenyewaanView() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (activeActionMenu && !e.target.closest('.action-cell')) {
+        setActiveActionMenu(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [activeActionMenu]);
+
   const fetchData = async () => {
     setLoading(true);
     try {

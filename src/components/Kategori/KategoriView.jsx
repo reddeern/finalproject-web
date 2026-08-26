@@ -22,6 +22,17 @@ export default function KategoriView() {
     fetchKategori();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      // Klik diluar popup, tutup popup
+      if (activeActionMenu && !e.target.closest('.action-cell')) {
+        setActiveActionMenu(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [activeActionMenu]);
+
   const fetchKategori = async () => {
     setLoading(true);
     try {
