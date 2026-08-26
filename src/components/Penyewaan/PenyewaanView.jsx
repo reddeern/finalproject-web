@@ -94,12 +94,13 @@ export default function PenyewaanView() {
   };
 
   const handleMarkAsReturned = async (id) => {
-    if (window.confirm('Tandai transaksi ini sebagai Sudah Kembali?')) {
+    if (window.confirm('Tandai transaksi ini sebagai Sudah Kembali?\n\nStatus pembayaran akan otomatis menjadi Lunas.')) {
       try {
         await api.patch(`/penyewaan/${id}`, {
-          penyewaan_sttskembali: 'Sudah Kembali'
+          penyewaan_sttskembali: 'Sudah Kembali',
+          penyewaan_sttspembayaran: 'Lunas'
         });
-        showMessage('success', 'Transaksi berhasil ditandai sebagai Sudah Kembali!');
+        showMessage('success', 'Transaksi berhasil ditandai sebagai Sudah Kembali dan pembayaran Lunas!');
         fetchData();
         setActiveActionMenu(null);
       } catch (error) {
