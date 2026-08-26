@@ -1,41 +1,37 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import DashboardView from '../components/DashboardView';
-import KategoriView from '../components/KategoriView';
-import AlatView from '../components/AlatView';
-import PelangganView from '../components/PelangganView';
-import PenyewaanView from '../components/PenyewaanView';
+import KategoriView from '../components/Kategori/KategoriView';
+import KategoriForm from '../components/Kategori/KategoriForm';
+import AlatView from '../components/Alat/AlatView';
+import AlatForm from '../components/Alat/AlatForm';
+import PelangganView from '../components/Pelanggan/PelangganView';
+import PelangganForm from '../components/Pelanggan/PelangganForm';
+import PenyewaanView from '../components/Penyewaan/PenyewaanView';
+import PenyewaanForm from '../components/Penyewaan/PenyewaanForm';
 
 export default function Dashboard() {
   const { admin, logout } = useAuth();
   const navigate = useNavigate();
-  
-  // State untuk melacak menu mana yang sedang aktif
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
   };
 
-  // Fungsi untuk me-render konten berdasarkan menu yang aktif
-  const renderContent = () => {
-    switch (activeMenu) {
-      case 'dashboard':
-        return <DashboardView adminName={admin?.admin_username || 'Admin'} />;
-      case 'kategori':
-        return <KategoriView />;
-      case 'alat':
-        return <AlatView />;
-      case 'pelanggan':
-        return <PelangganView />;
-      case 'penyewaan':
-        return <PenyewaanView />;
-      default:
-        return <div>Pilih menu dari sidebar.</div>;
-    }
+  // Fungsi untuk menentukan menu aktif berdasarkan URL
+  const getActiveMenu = () => {
+    const path = location.pathname;
+    if (path.includes('/alat')) return 'alat';
+    if (path.includes('/kategori')) return 'kategori';
+    if (path.includes('/pelanggan')) return 'pelanggan';
+    if (path.includes('/penyewaan')) return 'penyewaan';
+    return 'dashboard';
   };
+
+  const activeMenu = getActiveMenu();
 
   return (
     <>
@@ -215,31 +211,31 @@ export default function Dashboard() {
           <nav className="sidebar-nav">
             <div 
               className={`nav-item ${activeMenu === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setActiveMenu('dashboard')}
+              onClick={() => navigate('/admin')}
             >
               Dashboard
             </div>
             <div 
               className={`nav-item ${activeMenu === 'kategori' ? 'active' : ''}`}
-              onClick={() => setActiveMenu('kategori')}
+              onClick={() => navigate('/admin/kategori')}
             >
               Kategori Alat
             </div>
             <div 
               className={`nav-item ${activeMenu === 'alat' ? 'active' : ''}`}
-              onClick={() => setActiveMenu('alat')}
+              onClick={() => navigate('/admin/alat')}
             >
               Data Alat
             </div>
             <div 
               className={`nav-item ${activeMenu === 'pelanggan' ? 'active' : ''}`}
-              onClick={() => setActiveMenu('pelanggan')}
+              onClick={() => navigate('/admin/pelanggan')}
             >
               Data Pelanggan
             </div>
             <div 
               className={`nav-item ${activeMenu === 'penyewaan' ? 'active' : ''}`}
-              onClick={() => setActiveMenu('penyewaan')}
+              onClick={() => navigate('/admin/penyewaan')}
             >
               Transaksi Sewa
             </div>
@@ -265,7 +261,21 @@ export default function Dashboard() {
           </header>
 
           <section className="content-area">
-            {renderContent()}
+            <Routes>
+              <Route index element={<DashboardView adminName={admin?.admin_username || 'Admin'} />} />
+              <Route path="kategori" element={<KategoriView />} />
+              <Route path="kategori/tambah" element={<KategoriForm />} />
+              <Route path="kategori/edit/:id" element={<KategoriForm />} />
+              <Route path="alat" element={<AlatView />} />
+              <Route path="alat/tambah" element={<AlatForm />} />
+              <Route path="alat/edit/:id" element={<AlatForm />} />
+              <Route path="pelanggan" element={<PelangganView />} />
+              <Route path="pelanggan/tambah" element={<PelangganForm />} />
+              <Route path="pelanggan/edit/:id" element={<PelangganForm />} />
+              <Route path="penyewaan" element={<PenyewaanView />} />
+              <Route path="penyewaan/tambah" element={<PenyewaanForm />} />
+              <Route path="penyewaan/edit/:id" element={<PenyewaanForm />} />
+            </Routes>
           </section>
         </main>
       </div>

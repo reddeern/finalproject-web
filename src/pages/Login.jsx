@@ -18,7 +18,7 @@ export default function Login() {
 
     try {
       await login(username, password);
-      navigate('/dashboard', { replace: true });
+      navigate('/admin', { replace: true });
     } catch (err) {
       setError(
         err.response?.data?.message ||

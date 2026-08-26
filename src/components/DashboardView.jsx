@@ -72,10 +72,13 @@ export default function DashboardView({ adminName }) {
       // 3. Olah Data Barang Paling Sering Disewa
       const itemCounts = {};
       dataSewa.forEach(sewa => {
-        if (sewa.penyewaan_detail) {
-          sewa.penyewaan_detail.forEach(det => {
-            const id = det.penyewaan_detail_alat_id;
-            itemCounts[id] = (itemCounts[id] || 0) + Number(det.penyewaan_detail_jumlah);
+        // Cek kedua kemungkinan nama field: detail atau penyewaan_detail
+        const details = sewa.detail || sewa.penyewaan_detail;
+        if (details && details.length > 0) {
+          details.forEach(det => {
+            const id = det.penyewaan_detail_alat_id || det.alat_id;
+            const jumlah = det.penyewaan_detail_jumlah || det.jumlah;
+            itemCounts[id] = (itemCounts[id] || 0) + Number(jumlah);
           });
         }
       });
