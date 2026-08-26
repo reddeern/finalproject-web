@@ -93,6 +93,21 @@ export default function PenyewaanView() {
     navigate(`/admin/penyewaan/edit/${id}`);
   };
 
+  const handleMarkAsReturned = async (id) => {
+    if (window.confirm('Tandai transaksi ini sebagai Sudah Kembali?')) {
+      try {
+        await api.patch(`/penyewaan/${id}`, {
+          penyewaan_sttskembali: 'Sudah Kembali'
+        });
+        showMessage('success', 'Transaksi berhasil ditandai sebagai Sudah Kembali!');
+        fetchData();
+        setActiveActionMenu(null);
+      } catch (error) {
+        showMessage('error', 'Gagal mengubah status transaksi.');
+      }
+    }
+  };
+
   const getPelangganNama = (id) => {
     const p = pelangganList.find(x => x.pelanggan_id === id);
     return p ? p.pelanggan_nama : 'Unknown';
@@ -465,10 +480,28 @@ export default function PenyewaanView() {
                             </div>
                             <div 
                               className="action-popup-item edit"
-                              onClick={() => handleEdit(item.penyewaan_id)}
+                              style={{
+                                color: item.penyewaan_sttskembali === 'Sudah Kembali' ? '#ccc' : '#D84040',
+                                cursor: item.penyewaan_sttskembali === 'Sudah Kembali' ? 'not-allowed' : 'pointer',
+                                opacity: item.penyewaan_sttskembali === 'Sudah Kembali' ? 0.5 : 1
+                              }}
+                              onClick={() => {
+                                if (item.penyewaan_sttskembali !== 'Sudah Kembali') {
+                                  handleEdit(item.penyewaan_id);
+                                }
+                              }}
                             >
                               Edit
                             </div>
+                            {item.penyewaan_sttskembali === 'Belum Kembali' && (
+                              <div 
+                                className="action-popup-item"
+                                style={{ color: '#28a745' }}
+                                onClick={() => handleMarkAsReturned(item.penyewaan_id)}
+                              >
+                                Tandai Kembali
+                              </div>
+                            )}
                             <div 
                               className="action-popup-item delete"
                               onClick={() => handleDelete(item.penyewaan_id)}
